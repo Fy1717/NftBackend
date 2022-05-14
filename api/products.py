@@ -3,9 +3,7 @@ from flask import jsonify, Blueprint, request
 apiProducts = Blueprint("apiProducts", __name__, url_prefix="/api/products")
 
 from ecommerce.models import Product
-
-''' from ecommerce.jwtAuthorize import login_required
- '''
+from ecommerce.jwtAuthorize import admin_login_required
 
 @apiProducts.route("/")
 def products():
@@ -26,7 +24,7 @@ def products():
                 }
             )
 
-        return jsonify({"success": True, "data": products, "count": len(products)})
+        return jsonify({"data": products, "count": len(products)})
 
     except Exception as e:
         print("ERROR IN PRODUCTS: ", e)
@@ -52,13 +50,14 @@ def getProductsForCategory(categoryId):
                 }
             )
 
-        return jsonify({"success": True, "data": products, "count": len(products)})
+        return jsonify({"data": products, "count": len(products)})
     except Exception as e:
         print("ERROR IN PRODUCTS FOR CATEGORY: ", e)
         return jsonify({"message": "There is an error.."}), 400
 
 @apiProducts.route("/addProduct", methods=["POST"])
-def addproduct():
+@admin_login_required
+def addproduct(current_admin):
     try:
         name = request.form.get("name")
         price = request.form.get("price")
@@ -82,7 +81,7 @@ def addproduct():
 
         Product.add_product(name, price, oldPrice, description, category_id, image)
 
-        return jsonify({"success": True, "message": "Product added successfully"})
+        return jsonify({"message": "Product added successfully"})
     except Exception as e:
         print("ERROR in add_admin: ", e)
         return jsonify({"message": "There is an error.."}), 400
@@ -107,13 +106,14 @@ def getProduct(id):
                 "image": product.image,
             }
 
-            return jsonify({"success": True, "data": productObj})
+            return jsonify({"data": productObj})
     except Exception as e:
         print("ERROR in product: ", e)
         return jsonify({"message": "There is an error.."}), 400
 
 @apiProducts.route("/<int:id>", methods=["DELETE"])
-def delete_product(id):
+@admin_login_required
+def delete_product(current_admin, id):
     try:
         product = Product.get_product_by_id(id)
 
@@ -123,14 +123,15 @@ def delete_product(id):
         elif request.method == "DELETE":
             Product.delete_product(id)
 
-            return jsonify({"success": True, "message": "product deleted"})
+            return jsonify({"message": "product deleted"})
 
     except Exception as e:
         print("ERROR in product: ", e)
         return jsonify({"message": "There is an error.."}), 400
 
 @apiProducts.route("/<int:id>", methods=["PUT"])
-def update_product(id):
+@admin_login_required
+def update_product(current_admin, id):
     try:
         product = Product.get_product_by_id(id)
 
@@ -160,7 +161,7 @@ def update_product(id):
 
             Product.update_product(id, name, price, oldPrice, description, category_id, image)
 
-            return jsonify({"success": True, "message": "product updated"})
+            return jsonify({"message": "product updated"})
     except Exception as e:
         print("ERROR in product: ", e)
         return jsonify({"message": "There is an error.."}), 400

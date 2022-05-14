@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from enum import unique
 from ecommerce import db
 
 
@@ -90,6 +89,10 @@ class Admin(db.Model):
     @classmethod
     def get_admin_by_id(cls, id):
         return cls.query.filter_by(id=id).first()
+
+    @classmethod
+    def get_admin_by_name(cls, name):
+        return cls.query.filter_by(name=name).first()
 
     @classmethod
     def add_admin(cls, name, email, password):

@@ -27,7 +27,7 @@ app.register_blueprint(apiCategories)
 
 @app.route("/")
 def index():
-    return jsonify({"success": True, "message": "Main Page"})
+    return jsonify({"message": "Main Page"})
 
 
 if __name__ == "__main__":

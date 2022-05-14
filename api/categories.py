@@ -3,7 +3,7 @@ from flask import jsonify, Blueprint, request
 apiCategories = Blueprint("apiCategories", __name__, url_prefix="/api/categories")
 
 from ecommerce.models import Category
-
+from ecommerce.jwtAuthorize import user_login_required, admin_login_required
 
 @apiCategories.route("/")
 def categories():
@@ -16,14 +16,15 @@ def categories():
         for category in allCategories:
             categories.append({"id": category.id, "name": category.name})
 
-        return jsonify({"success": True, "data": categories, "count": len(categories)})
+        return jsonify({"data": categories, "count": len(categories)})
     except Exception as e:
         print("ERROR IN CATEGORIES: ", e)
         return jsonify({"success": False, "message": "There is an error.."})
 
 
 @apiCategories.route("/addCategory", methods=["POST"])
-def addCategory():
+@admin_login_required
+def addCategory(current_admin):
     try:
         name = request.form.get("name")
 
@@ -32,7 +33,7 @@ def addCategory():
 
         Category.add_category(name)
 
-        return jsonify({"success": True, "message": "Category added successfully"})
+        return jsonify({"message": "Category added successfully"})
     except Exception as e:
         print("ERROR in add_admin: ", e)
         return jsonify({"success": False, "message": "There is an error.."})
@@ -49,13 +50,14 @@ def get_category(id):
         if request.method == "GET":
             categoryObj = {"id": category.id, "name": category.name}
 
-            return jsonify({"success": True, "data": categoryObj})
+            return jsonify({"data": categoryObj})
     except Exception as e:
         print("ERROR in category: ", e)
         return jsonify({"success": False, "message": "There is an error.."})
 
 @apiCategories.route("/<int:id>", methods=["DELETE"])
-def delete_category(id):
+@admin_login_required
+def delete_category(current_admin, id):
     try:
         category = Category.get_category_by_id(id)
 
@@ -65,7 +67,7 @@ def delete_category(id):
         if request.method == "DELETE":
             Category.delete_category(id)
 
-            return jsonify({"success": True, "message": "Category deleted"})
+            return jsonify({"message": "Category deleted"})
 
     except Exception as e:
         print("ERROR in category: ", e)
@@ -73,7 +75,8 @@ def delete_category(id):
 
 
 @apiCategories.route("/<int:id>", methods=["PUT"])
-def update_category(id):
+@admin_login_required
+def update_category(current_admin, id):
     try:
         category = Category.get_category_by_id(id)
 
@@ -90,7 +93,7 @@ def update_category(id):
 
             Category.update_category(id, name)
 
-            return jsonify({"success": True, "message": "Category updated"})
+            return jsonify({"message": "Category updated"})
 
     except Exception as e:
         print("ERROR in category: ", e)

@@ -1,13 +1,15 @@
-from flask import jsonify, Blueprint, request
-from werkzeug.security import generate_password_hash
-
+from flask import jsonify, Blueprint, request, session
+from werkzeug.security import generate_password_hash, check_password_hash
 from ecommerce.models import Admin
+from ecommerce.jwtAuthorize import admin_login_required
+import datetime
+import jwt
 
 apiAdmins = Blueprint("apiAdmins", __name__, url_prefix="/api/admins")
 
-
 @apiAdmins.route("/")
-def admins():
+@admin_login_required
+def admins(current_admin):
     try:
         allAdmins = Admin.get_all_admins()
         admins = []
@@ -23,13 +25,14 @@ def admins():
                 }
             )
 
-        return jsonify({"success": True, "data": admins, "count": len(admins)})
+        return jsonify({"data": admins, "count": len(admins)})
     except Exception as e:
         return jsonify({"success": False, "message": "There is an error.."})
 
 
 @apiAdmins.route("/addAdmin", methods=["POST"])
-def add_admin():
+@admin_login_required
+def add_admin(current_admin):
     try:
         name = request.form.get("name")
         email = request.form.get("email")
@@ -46,14 +49,15 @@ def add_admin():
 
         Admin.add_admin(name, email, hashed_password)
 
-        return jsonify({"success": True, "message": "Admin added successfully"})
+        return jsonify({"message": "Admin added successfully"})
     except Exception as e:
         print("ERROR in add_admin: ", e)
         return jsonify({"success": False, "message": "There is an error.."})
 
 
 @apiAdmins.route("/<int:id>", methods=["GET", "DELETE", "PUT"])
-def admin(id):
+@admin_login_required
+def admin(current_admin, id):
     try:
         admin = Admin.get_admin_by_id(id)
 
@@ -68,14 +72,14 @@ def admin(id):
                 "password": admin.password,
             }
 
-            return jsonify({"success": True, "data": adminObj})
+            return jsonify({"data": adminObj})
 
         # -----------------------------------------------------------------------------
 
         elif request.method == "DELETE":
             admin.delete_admin(id)
 
-            return jsonify({"success": True, "message": "Admin deleted"})
+            return jsonify({"message": "Admin deleted"})
 
         # -----------------------------------------------------------------------------
 
@@ -99,10 +103,67 @@ def admin(id):
 
             Admin.update_admin(id, name, email, hashed_password)
 
-            return jsonify({"success": True, "message": "Admin updated"})
+            return jsonify({"message": "Admin updated"})
 
         # -----------------------------------------------------------------------------
 
     except Exception as e:
         # print("ERROR in admin: ", e)
         return jsonify({"success": False, "message": "There is an error.."})
+
+@apiAdmins.route("/login", methods=["GET", "POST"])
+def login():
+    try:
+        if request.method == "POST":
+            print("XXXXXXXXXX")
+            name = request.form.get("name")
+            password = request.form.get("password")
+
+            if name == None and password == None:
+                print("yyyyyyyyy")
+                return jsonify({"success": False})
+
+            admin = Admin.get_admin_by_name(name=name)
+
+            if admin != None:
+                print("DB DEN GELEN admin IN PASSWORD U : ", admin.password)
+                print("İSTEKTEN GELEN PASSWORD : ", password)
+
+                if check_password_hash(admin.password, password):
+                    print("admin ıd ", admin.id)
+
+                    tokenAdmin = jwt.encode(
+                        {
+                            "id": admin.id,
+                            "exp": datetime.datetime.utcnow()
+                            + datetime.timedelta(minutes=45),
+                        },
+                        "ecommerce-secret",
+                    )
+
+                    session["tokenAdmin"] = tokenAdmin.decode("UTF-8")
+
+                    admin = {"id": admin.id, "name": admin.name}
+
+                    return jsonify({"data": admin, "tokenAdmin": tokenAdmin.decode("UTF-8")})
+                else:
+                    return jsonify({"error": "Passwords not matched"}), 401
+            else:
+                return jsonify({"error": "admin not found"}), 404
+        else:
+            return jsonify({"error": "This is not a Post request"}), 400
+    except Exception as e:
+        print("ERROR in admin login: ", e)
+        return jsonify({"error": "There is an error.."})
+
+
+@apiAdmins.route("/logout")
+@admin_login_required
+def logout(current_user):
+    try:
+        print("SESSION TOKEN : ", session["tokenAdmin"])
+        session["tokenAdmin"] = "None"
+
+        return jsonify({"description": "Admin Logout"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 502
