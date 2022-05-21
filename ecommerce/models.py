@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from email.policy import default
 from ecommerce import db
 
 
@@ -164,8 +165,9 @@ class Product(db.Model):
     description = db.Column(db.String(120), nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey("category.id"), nullable=False)
     image = db.Column(db.String(120), nullable=False)
+    stock = db.Column(db.Integer, default=20)
 
-    def __init__(self, id, name, price, oldPrice, description, category_id, image):
+    def __init__(self, id, name, price, oldPrice, description, category_id, image, stock):
         self.id = id
         self.name = name
         self.price = price
@@ -173,6 +175,7 @@ class Product(db.Model):
         self.description = description
         self.category_id = category_id
         self.image = image
+        self.stock = stock
 
     @classmethod
     def get_all_products(cls):

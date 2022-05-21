@@ -21,6 +21,7 @@ def products():
                     "description": product.description,
                     "category_id": product.category_id,
                     "image": product.image,
+                    "stock": product.stock
                 }
             )
 

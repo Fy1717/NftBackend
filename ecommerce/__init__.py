@@ -1,10 +1,9 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-
+from flask_migrate import Migrate
 
 db = SQLAlchemy()
-
 
 def createApp():
     app = Flask(__name__,
@@ -18,6 +17,8 @@ def createApp():
     app.config['UPLOAD_FOLDER'] = "static/uploads/"
 
     CORS(app)
+
+    migrate = Migrate(app, db)
 
     db.init_app(app)
 

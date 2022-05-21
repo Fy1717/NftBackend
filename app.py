@@ -5,15 +5,18 @@ from api.users import apiUsers
 from api.products import apiProducts
 from api.admins import apiAdmins
 from api.categories import apiCategories
+from api.rickyandmorty import apiRickyAndMorty
+
 
 from ecommerce import createApp
 from ecommerce.initialize_db import createDB
 
 
+
 # APP AND DB CREATION ---------------------------------------------------------
 app = createApp()
 CORS(app)
-createDB()
+db = createDB()
 # -----------------------------------------------------------------------------
 
 
@@ -22,12 +25,15 @@ app.register_blueprint(apiUsers)
 app.register_blueprint(apiProducts)
 app.register_blueprint(apiAdmins)
 app.register_blueprint(apiCategories)
+app.register_blueprint(apiRickyAndMorty)
 # -----------------------------------------------------------------------------
 
 
+#print(results)
+
 @app.route("/")
 def index():
-    return jsonify({"message": "Main Page"})
+    return "HELLO WORLD"
 
 
 if __name__ == "__main__":

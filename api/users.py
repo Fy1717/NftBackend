@@ -8,10 +8,9 @@ from ecommerce.jwtAuthorize import admin_login_required, user_login_required
 
 apiUsers = Blueprint("apiUser", __name__, url_prefix="/api/users")
 
-
 @apiUsers.route("/")
 @admin_login_required
-def users(current_user):
+def users(current_admin):
     try:
         allUsers = User.get_all_users()
         users = []
@@ -87,64 +86,6 @@ def user(current_admin, id):
     except Exception as e:
         # print("ERROR in user: ", e)
         return jsonify({"message": "There is an error.."}), 502
-
-
-@apiUsers.route("/profile", methods=["GET", "DELETE", "PUT"])
-@user_login_required
-def profile(current_user):
-    try:
-        user = current_user
-
-        if user is None:
-            return jsonify({"message": "User not found"}), 404
-
-        if request.method == "GET":
-            userObj = {
-                "id": user.id,
-                "username": user.username,
-                "email": user.email,
-                "password": user.password,
-            }
-
-            return jsonify({"data": userObj})
-
-        # -----------------------------------------------------------------------------
-
-        elif request.method == "DELETE":
-            user.delete_user(user.id)
-
-            return jsonify({"message": "User deleted"})
-
-        # -----------------------------------------------------------------------------
-
-        elif request.method == "PUT":
-            username = request.form.get("username")
-            email = request.form.get("email")
-            password = request.form.get("password")
-
-            print("USERNAME: ", username)
-            print("EMAIL: ", email)
-            print("PASSWORD: ", password)
-
-            if username == None:
-                username = user.username
-            if email == None:
-                email = user.email
-            if password == None:
-                password = user.password
-
-            hashed_password = generate_password_hash(password)
-
-            User.update_user(user.id, username, email, hashed_password)
-
-            return jsonify({"message": "User updated"})
-
-        # -----------------------------------------------------------------------------
-
-    except Exception as e:
-        # print("ERROR in user: ", e)
-        return jsonify({"message": "There is an error.."}), 502
-
 
 @apiUsers.route("/addUser", methods=["POST"])
 def addUser():
@@ -320,3 +261,59 @@ def logout(current_user):
         return jsonify({"description": "User Logout"})
     except Exception as e:
         return jsonify({"error": str(e)}), 502
+
+@apiUsers.route("/profile", methods=["GET", "DELETE", "PUT"])
+@user_login_required
+def profile(current_user):
+    try:
+        user = current_user
+
+        if user is None:
+            return jsonify({"message": "User not found"}), 404
+
+        if request.method == "GET":
+            userObj = {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "password": user.password,
+            }
+
+            return jsonify({"data": userObj})
+
+        # -----------------------------------------------------------------------------
+
+        elif request.method == "DELETE":
+            user.delete_user(user.id)
+
+            return jsonify({"message": "User deleted"})
+
+        # -----------------------------------------------------------------------------
+
+        elif request.method == "PUT":
+            username = request.form.get("username")
+            email = request.form.get("email")
+            password = request.form.get("password")
+
+            print("USERNAME: ", username)
+            print("EMAIL: ", email)
+            print("PASSWORD: ", password)
+
+            if username == None:
+                username = user.username
+            if email == None:
+                email = user.email
+            if password == None:
+                password = user.password
+
+            hashed_password = generate_password_hash(password)
+
+            User.update_user(user.id, username, email, hashed_password)
+
+            return jsonify({"message": "User updated"})
+
+        # -----------------------------------------------------------------------------
+
+    except Exception as e:
+        # print("ERROR in user: ", e)
+        return jsonify({"message": "There is an error.."}), 502
