@@ -52,7 +52,7 @@ def add_admin(current_admin):
         return jsonify({"message": "Admin added successfully"})
     except Exception as e:
         print("ERROR in add_admin: ", e)
-        return jsonify({"success": False, "message": "There is an error.."})
+        return jsonify({"success": False, "message": "There is an error..", "error": e})
 
 
 @apiAdmins.route("/<int:id>", methods=["GET", "DELETE", "PUT"])
@@ -154,7 +154,7 @@ def login():
             return jsonify({"error": "This is not a Post request"}), 400
     except Exception as e:
         print("ERROR in admin login: ", e)
-        return jsonify({"error": "There is an error.."})
+        return jsonify({"error": "there is an error" + str(e)})
 
 
 @apiAdmins.route("/logout")

@@ -11,7 +11,7 @@ def createApp():
             static_folder = '../static/uploads/')
     app.config[
         "SQLALCHEMY_DATABASE_URI"
-    ] = "postgresql://postgres:postgres@localhost:5432/ecommerce"
+    ] = "postgresql://postgres:RuM3XXttmhCZQqpq@localhost:5432/ecommerce"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["SECRET_KEY"] = "ecommerce-secret"
     app.config['UPLOAD_FOLDER'] = "static/uploads/"
