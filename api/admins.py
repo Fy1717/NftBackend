@@ -156,7 +156,7 @@ def login():
             return jsonify({"error": "This is not a Post request"}), 400
     except Exception as e:
         print("ERROR in admin login: ", e)
-        return jsonify({"error": "there is an error" + str(e)})
+        return jsonify({"error": "There is an error" + str(e)})
 
 
 @apiAdmins.route("/logout")
