@@ -220,10 +220,10 @@ def login():
 
             if user != None:
                 print("DB DEN GELEN USER IN PASSWORD U : ", user.password)
-                print("İSTEKTEN GELEN PASSWORD : ", password)
+                print("iSTEKTEN GELEN PASSWORD : ", password)
 
                 if check_password_hash(user.password, password):
-                    print("user ıd ", user.id)
+                    print("user id :", user.id)
 
                     tokenUser = jwt.encode(
                         {

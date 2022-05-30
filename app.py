@@ -5,7 +5,6 @@ from api.users import apiUsers
 from api.products import apiProducts
 from api.admins import apiAdmins
 from api.categories import apiCategories
-from api.rickyandmorty import apiRickyAndMorty
 
 
 from ecommerce import createApp
@@ -25,7 +24,6 @@ app.register_blueprint(apiUsers)
 app.register_blueprint(apiProducts)
 app.register_blueprint(apiAdmins)
 app.register_blueprint(apiCategories)
-app.register_blueprint(apiRickyAndMorty)
 # -----------------------------------------------------------------------------
 
 

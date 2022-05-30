@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from flask import jsonify, Blueprint, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from ecommerce.models import Admin
@@ -127,10 +129,10 @@ def login():
 
             if admin != None:
                 print("DB DEN GELEN admin IN PASSWORD U : ", admin.password)
-                print("İSTEKTEN GELEN PASSWORD : ", password)
+                print("iSTEKTEN GELEN PASSWORD : ", password)
 
                 if check_password_hash(admin.password, password):
-                    print("admin ıd ", admin.id)
+                    print("admin id ", admin.id)
 
                     tokenAdmin = jwt.encode(
                         {
