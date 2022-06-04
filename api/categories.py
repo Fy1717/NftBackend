@@ -36,7 +36,7 @@ def addCategory(current_admin):
         return jsonify({"message": "Category added successfully"})
     except Exception as e:
         print("ERROR in add_admin: ", e)
-        return jsonify({"success": False, "message": "There is an error.."})
+        return jsonify({"success": False, "message": "There is an error..", "Error": str(e)})
 
 
 @apiCategories.route("/<int:id>", methods=["GET"])
@@ -71,7 +71,7 @@ def delete_category(current_admin, id):
 
     except Exception as e:
         print("ERROR in category: ", e)
-        return jsonify({"success": False, "message": "There is an error.."})
+        return jsonify({"success": False, "message": "There is an error..", "Error": str(e)})
 
 
 @apiCategories.route("/<int:id>", methods=["PUT"])
@@ -86,15 +86,12 @@ def update_category(current_admin, id):
         if request.method == "PUT":
             name = request.form.get("name")
 
-            #print("NAME: ", name)
-
             if name == None:
                 name = category.name
 
             Category.update_category(id, name)
 
             return jsonify({"message": "Category updated"})
-
     except Exception as e:
         print("ERROR in category: ", e)
-        return jsonify({"success": False, "message": "There is an error.."})
+        return jsonify({"success": False, "message": "There is an error..", "Error": str(e)})

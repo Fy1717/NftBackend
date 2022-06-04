@@ -28,7 +28,6 @@ def products():
         return jsonify({"data": products, "count": len(products)})
 
     except Exception as e:
-        print("ERROR IN PRODUCTS: ", e)
         return jsonify({"message": "There is an error.."}), 400
 
 @apiProducts.route("/filterByCategory/<int:categoryId>")
@@ -48,12 +47,12 @@ def getProductsForCategory(categoryId):
                     "description": product.description,
                     "category_id": product.category_id,
                     "image": product.image,
+                    "stock": product.stock
                 }
             )
 
         return jsonify({"data": products, "count": len(products)})
     except Exception as e:
-        print("ERROR IN PRODUCTS FOR CATEGORY: ", e)
         return jsonify({"message": "There is an error.."}), 400
 
 @apiProducts.route("/addProduct", methods=["POST"])
@@ -66,6 +65,7 @@ def addproduct(current_admin):
         description = request.form.get("description")
         category_id = request.form.get("categoryId")
         image = request.form.get("image")
+        stock = request.form.get("stock")
 
         if name == None:
             return jsonify({"message": "Name is required"}), 400
@@ -79,13 +79,14 @@ def addproduct(current_admin):
             return jsonify({"message": "Category is required"}), 400
         if image == None:
             return jsonify({"message": "Image is required"}), 400
+        if stock == None:
+            return jsonify({"message": "Stock is required"}), 400
 
-        Product.add_product(name, price, oldPrice, description, category_id, image)
+        Product.add_product(name, price, oldPrice, description, category_id, image, stock)
 
         return jsonify({"message": "Product added successfully"})
     except Exception as e:
-        print("ERROR in add_admin: ", e)
-        return jsonify({"message": "There is an error.."}), 400
+        return jsonify({"message": "There is an error..", "Error": str(e)}), 400
 
 
 @apiProducts.route("/<int:id>", methods=["GET"])
@@ -109,7 +110,6 @@ def getProduct(id):
 
             return jsonify({"data": productObj})
     except Exception as e:
-        print("ERROR in product: ", e)
         return jsonify({"message": "There is an error.."}), 400
 
 @apiProducts.route("/<int:id>", methods=["DELETE"])
@@ -127,8 +127,7 @@ def delete_product(current_admin, id):
             return jsonify({"message": "product deleted"})
 
     except Exception as e:
-        print("ERROR in product: ", e)
-        return jsonify({"message": "There is an error.."}), 400
+        return jsonify({"message": "There is an error..", "Error": str(e)}), 400
 
 @apiProducts.route("/<int:id>", methods=["PUT"])
 @admin_login_required
@@ -146,6 +145,7 @@ def update_product(current_admin, id):
             description = request.form.get("description")
             category_id = request.form.get("categoryId")
             image = request.form.get("image")
+            stock = request.form.get("stock")
 
             if name == None:
                 name = product.name
@@ -159,11 +159,12 @@ def update_product(current_admin, id):
                 category_id = product.category_id
             if image == None:
                 image = product.image
+            if stock == None:
+                stock = product.stock
 
-            Product.update_product(id, name, price, oldPrice, description, category_id, image)
+            Product.update_product(id, name, price, oldPrice, description, category_id, image, stock)
 
             return jsonify({"message": "product updated"})
     except Exception as e:
-        print("ERROR in product: ", e)
-        return jsonify({"message": "There is an error.."}), 400
+        return jsonify({"message": "There is an error..", "Error": str(e)}), 400
             

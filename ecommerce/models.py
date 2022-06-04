@@ -186,13 +186,13 @@ class Product(db.Model):
         return cls.query.filter_by(id=id).first()
 
     @classmethod
-    def add_product(cls, name, price, oldPrice, description, category_id, image):
-        product = cls(None, name, price, oldPrice, description, category_id, image)
+    def add_product(cls, name, price, oldPrice, description, category_id, image, stock):
+        product = cls(None, name, price, oldPrice, description, category_id, image, stock)
         db.session.add(product)
         db.session.commit()
 
     @classmethod
-    def update_product(cls, id, name, price, oldPrice, description, category_id, image):
+    def update_product(cls, id, name, price, oldPrice, description, category_id, image, stock):
         product = cls.query.filter_by(id=id).first()
         product.name = name
         product.price = price
@@ -200,6 +200,8 @@ class Product(db.Model):
         product.description = description
         product.category_id = category_id
         product.image = image
+        product.stock = stock
+
         db.session.commit()
 
     @classmethod

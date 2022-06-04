@@ -53,7 +53,6 @@ def add_admin(current_admin):
 
         return jsonify({"message": "Admin added successfully"})
     except Exception as e:
-        print("ERROR in add_admin: ", e)
         return jsonify({"success": False, "message": "There is an error..", "error": e})
 
 
@@ -90,10 +89,6 @@ def admin(current_admin, id):
             email = request.form.get("email")
             password = request.form.get("password")
 
-            print("NAME: ", name)
-            print("EMAIL: ", email)
-            print("PASSWORD: ", password)
-
             if name == None:
                 name = admin.name
             if email == None:
@@ -110,30 +105,22 @@ def admin(current_admin, id):
         # -----------------------------------------------------------------------------
 
     except Exception as e:
-        # print("ERROR in admin: ", e)
         return jsonify({"success": False, "message": "There is an error.."})
 
 @apiAdmins.route("/login", methods=["GET", "POST"])
 def login():
     try:
         if request.method == "POST":
-            print("XXXXXXXXXX")
             name = request.form.get("name")
             password = request.form.get("password")
 
             if name == None and password == None:
-                print("yyyyyyyyy")
                 return jsonify({"success": False})
 
             admin = Admin.get_admin_by_name(name=name)
 
             if admin != None:
-                print("DB DEN GELEN admin IN PASSWORD U : ", admin.password)
-                print("iSTEKTEN GELEN PASSWORD : ", password)
-
                 if check_password_hash(admin.password, password):
-                    print("admin id ", admin.id)
-
                     tokenAdmin = jwt.encode(
                         {
                             "id": admin.id,
@@ -155,7 +142,6 @@ def login():
         else:
             return jsonify({"error": "This is not a Post request"}), 400
     except Exception as e:
-        print("ERROR in admin login: ", e)
         return jsonify({"error": "There is an error" + str(e)})
 
 
@@ -163,7 +149,6 @@ def login():
 @admin_login_required
 def logout(current_user):
     try:
-        print("SESSION TOKEN : ", session["tokenAdmin"])
         session["tokenAdmin"] = "None"
 
         return jsonify({"description": "Admin Logout"})

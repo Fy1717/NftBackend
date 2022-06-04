@@ -26,7 +26,6 @@ def admin_login_required(f):
 
             return f(current_admin, *args, **kwargs)
         except Exception as e:
-            print("ERROR in admin_login_required: ", e)
             return jsonify({'success': False, 'description': 'Please admin login the system.. 2222'}), 401
     return decorator
 
@@ -53,6 +52,5 @@ def user_login_required(f):
 
             return f(current_user, *args, **kwargs)
         except Exception as e:
-            print("ERROR in admin_login_required: ", e)
             return jsonify({'success': False, 'description': 'Please login the system.. 2222'}), 401
     return decorator
