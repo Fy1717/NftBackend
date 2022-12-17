@@ -11,14 +11,11 @@ def categories():
         allCategories = Category.get_all_categories()
         categories = []
 
-        #print("allCategories : ", allCategories)
-
         for category in allCategories:
             categories.append({"id": category.id, "name": category.name})
 
         return jsonify({"data": categories, "count": len(categories)})
     except Exception as e:
-        print("ERROR IN CATEGORIES: ", e)
         return jsonify({"success": False, "message": "There is an error.."})
 
 
@@ -35,7 +32,6 @@ def addCategory(current_admin):
 
         return jsonify({"message": "Category added successfully"})
     except Exception as e:
-        print("ERROR in add_admin: ", e)
         return jsonify({"success": False, "message": "There is an error..", "Error": str(e)})
 
 
@@ -52,7 +48,6 @@ def get_category(id):
 
             return jsonify({"data": categoryObj})
     except Exception as e:
-        print("ERROR in category: ", e)
         return jsonify({"success": False, "message": "There is an error.."})
 
 @apiCategories.route("/<int:id>", methods=["DELETE"])
@@ -70,7 +65,6 @@ def delete_category(current_admin, id):
             return jsonify({"message": "Category deleted"})
 
     except Exception as e:
-        print("ERROR in category: ", e)
         return jsonify({"success": False, "message": "There is an error..", "Error": str(e)})
 
 
@@ -93,5 +87,4 @@ def update_category(current_admin, id):
 
             return jsonify({"message": "Category updated"})
     except Exception as e:
-        print("ERROR in category: ", e)
         return jsonify({"success": False, "message": "There is an error..", "Error": str(e)})

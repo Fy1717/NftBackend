@@ -6,10 +6,8 @@ from api.products import apiProducts
 from api.admins import apiAdmins
 from api.categories import apiCategories
 
-
 from ecommerce import createApp
 from ecommerce.initialize_db import createDB
-
 
 
 # APP AND DB CREATION ---------------------------------------------------------
@@ -26,8 +24,6 @@ app.register_blueprint(apiAdmins)
 app.register_blueprint(apiCategories)
 # -----------------------------------------------------------------------------
 
-
-#print(results)
 
 @app.route("/")
 def index():
